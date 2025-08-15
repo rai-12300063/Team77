@@ -1,0 +1,209 @@
+@startuml Parametric Diagram - Online Learning Progress Tracker
+!theme amiga
+
+' SysML Parametric Diagram for Online Learning Progress Tracker
+title Parametric Diagram - Online Learning Progress Tracker
+
+package "Progress Calculation Constraints" {
+  
+  constraint "Course Completion Percentage" as completionConstraint {
+    equation: completionPercentage = (modulesCompleted / totalModules) * 100
+    -- Parameters --
+    completionPercentage: Real [0..100]
+    modulesCompleted: Integer [0..*]
+    totalModules: Integer [1..*]
+    -- Constraints --
+    0 <= completionPercentage <= 100
+    modulesCompleted <= totalModules
+  }
+  
+  constraint "Time Tracking Constraint" as timeConstraint {
+    equation: totalTimeSpent = sum(moduleTimeSpent[i]) for i in completedModules
+    -- Parameters --
+    totalTimeSpent: Integer [0..*] {unit: minutes}
+    moduleTimeSpent: Array[Integer] {unit: minutes}
+    sessionDuration: Integer [1..480] {unit: minutes}
+    -- Constraints --
+    sessionDuration <= 480  // Max 8 hours per session
+    totalTimeSpent >= 0
+  }
+  
+  constraint "Learning Streak Calculation" as streakConstraint {
+    equation: currentStreak = consecutiveDaysWithActivity
+    longestStreak = max(currentStreak, previousLongestStreak)
+    -- Parameters --
+    currentStreak: Integer [0..*] {unit: days}
+    longestStreak: Integer [0..*] {unit: days}
+    lastLearningDate: Date
+    dailyLearningMinimum: Integer = 15 {unit: minutes}
+    -- Constraints --
+    currentStreak >= 0
+    longestStreak >= currentStreak
+  }
+  
+  constraint "Achievement Unlock Constraint" as achievementConstraint {
+    equation: achievementUnlocked = evaluateCondition(progressMetrics, thresholds)
+    -- Parameters --
+    timeSpentThreshold: Integer = 600 {unit: minutes} // 10 hours for "Study Warrior"
+    completionThreshold: Real = 100.0 {unit: percentage}
+    streakThreshold: Integer = 7 {unit: days}
+    courseCountThreshold: Integer = 5
+    -- Constraints --
+    timeSpentThreshold > 0
+    0 < completionThreshold <= 100
+    streakThreshold > 0
+  }
+}
+
+package "Performance and Scaling Constraints" {
+  
+  constraint "Response Time Constraint" as responseTimeConstraint {
+    equation: averageResponseTime <= maxAllowedResponseTime
+    -- Parameters --
+    averageResponseTime: Real [0..*] {unit: seconds}
+    maxAllowedResponseTime: Real = 2.0 {unit: seconds}
+    requestCount: Integer [0..*]
+    serverCapacity: Integer = 10000 {unit: concurrent_users}
+    -- Constraints --
+    averageResponseTime <= 2.0
+    requestCount <= serverCapacity
+  }
+  
+  constraint "Database Performance Constraint" as dbConstraint {
+    equation: queryExecutionTime = f(dataSize, indexOptimization)
+    -- Parameters --
+    queryExecutionTime: Real [0..*] {unit: milliseconds}
+    dataSize: Integer [0..*] {unit: records}
+    indexOptimization: Boolean = true
+    maxQueryTime: Real = 500.0 {unit: milliseconds}
+    -- Constraints --
+    queryExecutionTime <= maxQueryTime
+    indexOptimization = true for dataSize > 1000
+  }
+}
+
+package "Learning Analytics Constraints" {
+  
+  constraint "Progress Rate Calculation" as progressRateConstraint {
+    equation: progressRate = (currentProgress - previousProgress) / timePeriod
+    estimatedCompletion = remainingProgress / progressRate
+    -- Parameters --
+    progressRate: Real {unit: percentage_per_day}
+    currentProgress: Real [0..100] {unit: percentage}
+    previousProgress: Real [0..100] {unit: percentage}
+    timePeriod: Integer [1..*] {unit: days}
+    remainingProgress: Real [0..100] {unit: percentage}
+    estimatedCompletion: Real [0..*] {unit: days}
+    -- Constraints --
+    progressRate >= 0
+    currentProgress >= previousProgress
+    remainingProgress = 100 - currentProgress
+  }
+  
+  constraint "Learning Efficiency Metric" as efficiencyConstraint {
+    equation: learningEfficiency = knowledgeGained / timeInvested
+    -- Parameters --
+    learningEfficiency: Real [0..*] {unit: points_per_hour}
+    knowledgeGained: Real [0..*] {unit: points}
+    timeInvested: Real [0..*] {unit: hours}
+    difficultyMultiplier: Real [0.5..2.0] = 1.0
+    -- Constraints --
+    learningEfficiency >= 0
+    timeInvested > 0 implies knowledgeGained >= 0
+    knowledgeGained = basePoints * difficultyMultiplier
+  }
+  
+  constraint "Engagement Score Calculation" as engagementConstraint {
+    equation: engagementScore = w1*loginFrequency + w2*sessionDuration + w3*completionRate
+    -- Parameters --
+    engagementScore: Real [0..100]
+    loginFrequency: Real [0..1] {unit: normalized}
+    sessionDuration: Real [0..1] {unit: normalized}
+    completionRate: Real [0..1] {unit: normalized}
+    w1: Real = 0.3 // Weight for login frequency
+    w2: Real = 0.4 // Weight for session duration  
+    w3: Real = 0.3 // Weight for completion rate
+    -- Constraints --
+    w1 + w2 + w3 = 1.0
+    0 <= engagementScore <= 100
+  }
+}
+
+package "Course Rating and Quality Constraints" {
+  
+  constraint "Course Rating Calculation" as ratingConstraint {
+    equation: averageRating = sum(individualRatings) / ratingCount
+    -- Parameters --
+    averageRating: Real [0..5]
+    individualRatings: Array[Real] [1..5]
+    ratingCount: Integer [0..*]
+    minimumRatingsRequired: Integer = 3
+    -- Constraints --
+    1 <= individualRatings[i] <= 5 for all i
+    ratingCount >= minimumRatingsRequired for averageRating validity
+    0 <= averageRating <= 5
+  }
+  
+  constraint "Course Difficulty Adjustment" as difficultyConstraint {
+    equation: adjustedDifficulty = baseDifficulty * adaptationFactor
+    adaptationFactor = f(studentPerformance, completionRates)
+    -- Parameters --
+    baseDifficulty: Integer [1..3] // 1=Beginner, 2=Intermediate, 3=Advanced
+    adjustedDifficulty: Real [1..3]
+    studentPerformance: Real [0..100] {unit: percentage}
+    completionRates: Real [0..100] {unit: percentage}
+    adaptationFactor: Real [0.8..1.2]
+    -- Constraints --
+    1 <= adjustedDifficulty <= 3
+    adaptationFactor = 0.8 if completionRates < 60
+    adaptationFactor = 1.2 if completionRates > 90
+  }
+}
+
+package "Resource Utilization Constraints" {
+  
+  constraint "Storage Capacity Constraint" as storageConstraint {
+    equation: totalStorageUsed = userDataSize + courseContentSize + analyticsDataSize
+    -- Parameters --
+    totalStorageUsed: Real [0..*] {unit: gigabytes}
+    userDataSize: Real [0..*] {unit: gigabytes}
+    courseContentSize: Real [0..*] {unit: gigabytes}
+    analyticsDataSize: Real [0..*] {unit: gigabytes}
+    maxStorageCapacity: Real = 1000.0 {unit: gigabytes}
+    -- Constraints --
+    totalStorageUsed <= maxStorageCapacity
+    userDataSize >= 0
+    courseContentSize >= 0
+    analyticsDataSize >= 0
+  }
+  
+  constraint "Concurrent User Constraint" as concurrencyConstraint {
+    equation: systemLoad = activeUsers / maxConcurrentUsers
+    -- Parameters --
+    systemLoad: Real [0..1] {unit: percentage}
+    activeUsers: Integer [0..*]
+    maxConcurrentUsers: Integer = 10000
+    warningThreshold: Real = 0.8
+    criticalThreshold: Real = 0.95
+    -- Constraints --
+    systemLoad <= 1.0
+    activeUsers <= maxConcurrentUsers
+    warningThreshold < criticalThreshold
+  }
+}
+
+' Constraint relationships and dependencies
+completionConstraint --> timeConstraint : depends on time tracking
+achievementConstraint --> completionConstraint : uses completion data
+achievementConstraint --> streakConstraint : uses streak data
+progressRateConstraint --> completionConstraint : calculates rate of progress
+efficiencyConstraint --> timeConstraint : uses time investment
+engagementConstraint --> progressRateConstraint : includes completion rate
+ratingConstraint --> difficultyConstraint : influences difficulty adjustment
+
+' System performance relationships
+responseTimeConstraint --> concurrencyConstraint : affected by load
+dbConstraint --> storageConstraint : storage impacts query performance
+concurrencyConstraint --> responseTimeConstraint : user load affects response time
+
+@enduml

@@ -138,6 +138,20 @@ We will send you an email to choose a Real-World project. If you face any diffic
 
 ---
 
+## 📊 System Design Documentation
+
+### SysML Diagrams
+
+This project includes comprehensive SysML (Systems Modeling Language) diagrams located in the `/diagrams` folder:
+
+1. **[Requirements Diagram](./diagrams/requirements-diagram.puml)** - Stakeholder requirements and system functionality
+2. **[Block Definition Diagram (BDD)](./diagrams/block-definition-diagram.puml)** - System architecture and component structure  
+3. **[Parametric Diagram](./diagrams/parametric-diagram.puml)** - Mathematical constraints and performance relationships
+
+For detailed information about each diagram, see [diagrams/README.md](./diagrams/README.md).
+
+---
+
 **Assessment Criteria:**
 
 * Clarity and completeness of Jira board and SysML models.

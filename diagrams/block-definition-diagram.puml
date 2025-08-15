@@ -1,0 +1,277 @@
+@startuml Block Definition Diagram - Online Learning Progress Tracker
+!theme amiga
+
+' SysML Block Definition Diagram for Online Learning Progress Tracker
+title Block Definition Diagram (BDD) - Online Learning Progress Tracker
+
+package "System Architecture" {
+  
+  block "Online Learning Progress Tracker" as system {
+    -- Properties --
+    + version: String = "1.0.0"
+    + status: String = "FULLY WORKING"
+    + deployment: String = "Full-Stack Application"
+  }
+  
+  block "Frontend Subsystem" as frontend {
+    -- Properties --
+    + framework: String = "React.js"
+    + port: Integer = 3000
+    + styling: String = "Tailwind CSS"
+    -- Operations --
+    + renderUI()
+    + handleUserInteraction()
+    + makeAPICall()
+  }
+  
+  block "Backend Subsystem" as backend {
+    -- Properties --
+    + framework: String = "Node.js + Express"
+    + port: Integer = 5001
+    + authentication: String = "JWT"
+    -- Operations --
+    + processRequest()
+    + validateAuth()
+    + manageDatabase()
+  }
+  
+  block "Database Subsystem" as database {
+    -- Properties --
+    + type: String = "MongoDB"
+    + connectionType: String = "Mongoose ODM"
+    -- Operations --
+    + storeData()
+    + retrieveData()
+    + updateData()
+    + deleteData()
+  }
+}
+
+package "Frontend Components" {
+  
+  block "User Interface Layer" as ui {
+    -- Properties --
+    + responsiveDesign: Boolean = true
+    + crossBrowser: Boolean = true
+  }
+  
+  block "Authentication Pages" as authPages {
+    -- Properties --
+    + loginPage: Component
+    + registerPage: Component
+    -- Operations --
+    + validateCredentials()
+    + redirectUser()
+  }
+  
+  block "Dashboard Component" as dashboard {
+    -- Properties --
+    + userStats: Object
+    + recentActivity: Array
+    -- Operations --
+    + displayAnalytics()
+    + showProgress()
+  }
+  
+  block "Course Components" as courseUI {
+    -- Properties --
+    + courseList: Array
+    + courseDetail: Object
+    -- Operations --
+    + browseCourses()
+    + enrollInCourse()
+    + showProgress()
+  }
+  
+  block "Task Components" as taskUI {
+    -- Properties --
+    + taskList: Array
+    + taskForm: Object
+    -- Operations --
+    + createTask()
+    + updateTask()
+    + deleteTask()
+  }
+}
+
+package "Backend Services" {
+  
+  block "Authentication Service" as authService {
+    -- Properties --
+    + jwtSecret: String
+    + tokenExpiry: String = "30d"
+    -- Operations --
+    + registerUser()
+    + loginUser()
+    + generateToken()
+    + verifyToken()
+  }
+  
+  block "Course Management Service" as courseService {
+    -- Properties --
+    + courseRepository: Repository
+    -- Operations --
+    + createCourse()
+    + getCourses()
+    + updateCourse()
+    + deleteCourse()
+    + enrollStudent()
+  }
+  
+  block "Progress Tracking Service" as progressService {
+    -- Properties --
+    + progressRepository: Repository
+    -- Operations --
+    + trackModuleCompletion()
+    + calculateProgress()
+    + generateAnalytics()
+    + awardAchievements()
+  }
+  
+  block "Task Management Service" as taskService {
+    -- Properties --
+    + taskRepository: Repository
+    -- Operations --
+    + createTask()
+    + getTasks()
+    + updateTask()
+    + deleteTask()
+  }
+  
+  block "Middleware Layer" as middleware {
+    -- Properties --
+    + corsEnabled: Boolean = true
+    -- Operations --
+    + authenticateRequest()
+    + validateInput()
+    + handleErrors()
+  }
+}
+
+package "Data Models" {
+  
+  block "User Model" as userModel {
+    -- Properties --
+    + id: ObjectId
+    + name: String
+    + email: String
+    + password: String (hashed)
+    + role: String = "student"
+    + learningGoals: Array[String]
+    + totalLearningHours: Number = 0
+    + currentStreak: Number = 0
+    -- Operations --
+    + validatePassword()
+    + updateProfile()
+  }
+  
+  block "Course Model" as courseModel {
+    -- Properties --
+    + id: ObjectId
+    + title: String
+    + description: String
+    + category: String
+    + difficulty: String
+    + instructor: Object
+    + syllabus: Array[Module]
+    + estimatedCompletionTime: Number
+    + rating: Number
+    -- Operations --
+    + addModule()
+    + updateRating()
+  }
+  
+  block "Learning Progress Model" as progressModel {
+    -- Properties --
+    + userId: ObjectId
+    + courseId: ObjectId
+    + completionPercentage: Number = 0
+    + modulesCompleted: Array[Object]
+    + totalTimeSpent: Number = 0
+    + achievements: Array[Object]
+    + isCompleted: Boolean = false
+    -- Operations --
+    + updateProgress()
+    + calculateCompletion()
+    + unlockAchievement()
+  }
+  
+  block "Task Model" as taskModel {
+    -- Properties --
+    + id: ObjectId
+    + userId: ObjectId
+    + title: String
+    + description: String
+    + completed: Boolean = false
+    + deadline: Date
+    -- Operations --
+    + markComplete()
+    + updateDeadline()
+  }
+}
+
+package "External Systems" {
+  
+  block "Certificate Authority" as certAuth {
+    -- Properties --
+    + issuerName: String
+    + validationEndpoint: String
+    -- Operations --
+    + issueCertificate()
+    + validateCertificate()
+  }
+  
+  block "Notification Service" as notificationService {
+    -- Properties --
+    + emailProvider: String
+    + smsProvider: String
+    -- Operations --
+    + sendNotification()
+    + scheduleReminder()
+  }
+}
+
+' System composition relationships
+system *-- frontend : contains
+system *-- backend : contains  
+system *-- database : contains
+
+' Frontend composition
+frontend *-- ui : contains
+ui *-- authPages : contains
+ui *-- dashboard : contains
+ui *-- courseUI : contains
+ui *-- taskUI : contains
+
+' Backend composition
+backend *-- authService : contains
+backend *-- courseService : contains
+backend *-- progressService : contains
+backend *-- taskService : contains
+backend *-- middleware : contains
+
+' Database composition
+database *-- userModel : stores
+database *-- courseModel : stores
+database *-- progressModel : stores
+database *-- taskModel : stores
+
+' Service dependencies
+frontend --> backend : communicates via REST API
+backend --> database : persists data
+authService --> userModel : manages
+courseService --> courseModel : manages
+progressService --> progressModel : manages
+taskService --> taskModel : manages
+
+' External system relationships
+progressService --> certAuth : requests certificates
+backend --> notificationService : sends notifications
+
+' Cross-cutting concerns
+middleware --> authService : delegates authentication
+progressService --> courseModel : references
+progressModel --> userModel : references
+progressModel --> courseModel : references
+
+@enduml

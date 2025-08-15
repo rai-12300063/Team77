@@ -1,0 +1,151 @@
+@startuml Requirements Diagram - Online Learning Progress Tracker
+!theme amiga
+
+' SysML Requirements Diagram for Online Learning Progress Tracker
+title Requirements Diagram - Online Learning Progress Tracker
+
+package "Stakeholders" {
+  actor Student as student
+  actor Instructor as instructor  
+  actor Administrator as admin
+  actor "System Administrator" as sysadmin
+}
+
+package "Functional Requirements" {
+  requirement "User Management" as FR001 {
+    id: FR001
+    text: System shall provide user registration, authentication, and profile management
+  }
+  
+  requirement "Course Management" as FR002 {
+    id: FR002
+    text: System shall allow instructors to create, update, and manage courses with syllabus
+  }
+  
+  requirement "Course Enrollment" as FR003 {
+    id: FR003
+    text: System shall allow students to browse and enroll in available courses
+  }
+  
+  requirement "Progress Tracking" as FR004 {
+    id: FR004
+    text: System shall track student learning progress, module completion, and time spent
+  }
+  
+  requirement "Task Management" as FR005 {
+    id: FR005
+    text: System shall provide task creation, assignment, and completion tracking
+  }
+  
+  requirement "Analytics Dashboard" as FR006 {
+    id: FR006
+    text: System shall provide learning analytics and progress visualization
+  }
+  
+  requirement "Achievement System" as FR007 {
+    id: FR007
+    text: System shall award achievements and certificates based on learning milestones
+  }
+  
+  requirement "Learning Streaks" as FR008 {
+    id: FR008
+    text: System shall track and maintain learning streaks and habits
+  }
+  
+  requirement "Bookmarking System" as FR009 {
+    id: FR009
+    text: System shall allow students to bookmark content and add personal notes
+  }
+  
+  requirement "Goal Setting" as FR010 {
+    id: FR010
+    text: System shall enable students to set and track learning goals
+  }
+}
+
+package "Non-Functional Requirements" {
+  requirement "Security" as NFR001 {
+    id: NFR001
+    text: System shall implement JWT-based authentication and secure data transmission
+  }
+  
+  requirement "Performance" as NFR002 {
+    id: NFR002
+    text: System shall respond to user requests within 2 seconds under normal load
+  }
+  
+  requirement "Scalability" as NFR003 {
+    id: NFR003
+    text: System shall support up to 10,000 concurrent users
+  }
+  
+  requirement "Usability" as NFR004 {
+    id: NFR004
+    text: System shall provide intuitive user interface accessible across devices
+  }
+  
+  requirement "Reliability" as NFR005 {
+    id: NFR005
+    text: System shall maintain 99.5% uptime availability
+  }
+  
+  requirement "Data Integrity" as NFR006 {
+    id: NFR006
+    text: System shall ensure data consistency and backup recovery capabilities
+  }
+}
+
+package "System Requirements" {
+  requirement "API Integration" as SR001 {
+    id: SR001
+    text: System shall provide RESTful API for frontend-backend communication
+  }
+  
+  requirement "Database Management" as SR002 {
+    id: SR002
+    text: System shall use MongoDB for data persistence and management
+  }
+  
+  requirement "Frontend Framework" as SR003 {
+    id: SR003
+    text: System shall use React.js for responsive user interface
+  }
+}
+
+' Stakeholder relationships
+student --> FR001 : requires
+student --> FR003 : requires
+student --> FR004 : requires
+student --> FR005 : requires
+student --> FR006 : requires
+student --> FR009 : requires
+student --> FR010 : requires
+
+instructor --> FR002 : requires
+instructor --> FR005 : requires
+instructor --> FR006 : requires
+
+admin --> FR001 : manages
+admin --> FR002 : oversees
+admin --> FR007 : configures
+
+sysadmin --> NFR001 : implements
+sysadmin --> NFR002 : monitors
+sysadmin --> NFR005 : maintains
+sysadmin --> SR002 : manages
+
+' Requirement dependencies
+FR003 --> FR001 : depends on
+FR004 --> FR003 : depends on
+FR007 --> FR004 : depends on
+FR008 --> FR004 : depends on
+FR006 --> FR004 : depends on
+
+' System requirement relationships
+SR001 --> FR001 : supports
+SR001 --> FR002 : supports
+SR001 --> FR004 : supports
+SR002 --> NFR006 : supports
+SR003 --> NFR004 : supports
+
+@enduml
