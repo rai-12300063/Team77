@@ -1,0 +1,30 @@
+GITHUB REMINDERS:
+ 
+DO THIS EVERYTIME - Update your branch with the changes in the Main before you push
+ 
+git fetch origin
+git switch my-branch   #if there's a conflict, commit first or use git stash
+git merge origin/main   #fix conflicts
+ 
+# No conflicts from main
+git push
+ 
+DAILY BASICS - Check for changes before you push
+git status
+git add -A
+git commit -m "msg"
+git push
+ 
+ 
+GITHUB BRANCHING
+ 
+1 story = 1 branch 
+Sub-tasks = commits (same branch) 
+Epic = no branch
+ 
+BRANCH NAMING:
+feature/ — new functionality or UX.
+sample: feature/BUK-123-user-login
+ 
+fix/ (or bugfix/) — bug fixes.
+Sample: fix/BUK-variable-error  
