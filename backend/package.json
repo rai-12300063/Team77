@@ -12,7 +12,8 @@
     "prod": "node server.js",
     "seed": "node seedCourses.js",
     "seed:courses": "node seedCourses.js",
-    "create-test-user": "node createTestUser.js"
+    "create-test-user": "node createTestUser.js",
+    "create-admin": "node createAdmin.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",

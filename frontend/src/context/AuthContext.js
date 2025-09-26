@@ -60,14 +60,42 @@ export const AuthProvider = ({ children }) => {
     return !!(user && token);
   };
 
+  const hasRole = (requiredRole) => {
+    if (!user || !user.role) return false;
+
+    const roleHierarchy = {
+      'student': 1,
+      'instructor': 2,
+      'admin': 3
+    };
+
+    return roleHierarchy[user.role] >= roleHierarchy[requiredRole];
+  };
+
+  const isAdmin = () => {
+    return user && user.role === 'admin';
+  };
+
+  const isInstructor = () => {
+    return user && (user.role === 'instructor' || user.role === 'admin');
+  };
+
+  const isStudent = () => {
+    return user && user.role === 'student';
+  };
+
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      token, 
-      loading, 
-      login, 
-      logout, 
-      isAuthenticated 
+    <AuthContext.Provider value={{
+      user,
+      token,
+      loading,
+      login,
+      logout,
+      isAuthenticated,
+      hasRole,
+      isAdmin,
+      isInstructor,
+      isStudent
     }}>
       {children}
     </AuthContext.Provider>

@@ -9,7 +9,7 @@ const {
     unenrollFromCourse,
     getEnrolledCourses 
 } = require('../controllers/courseController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, requireInstructor, requireAdmin } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Public routes (no authentication required)
@@ -21,7 +21,7 @@ router.get('/', getCourses);
 router.get('/enrolled/my', protect, getEnrolledCourses);
 
 // POST /api/courses - Create a new course (instructor/admin only)
-router.post('/', protect, createCourse);
+router.post('/', protect, requireInstructor, createCourse);
 
 // GET /api/courses/:id - Get single course details
 router.get('/:id', getCourse);
@@ -33,10 +33,10 @@ router.post('/:id/enroll', protect, enrollInCourse);
 router.post('/:id/unenroll', protect, unenrollFromCourse);
 
 // PUT /api/courses/:id - Update a course (instructor/admin only)
-router.put('/:id', protect, updateCourse);
+router.put('/:id', protect, requireInstructor, updateCourse);
 
 // DELETE /api/courses/:id - Delete a course (admin only)
-router.delete('/:id', protect, deleteCourse);
+router.delete('/:id', protect, requireAdmin, deleteCourse);
 
 
 module.exports = router;
